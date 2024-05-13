@@ -3,5 +3,5 @@
     "version": "1.0.0",
     "description": "Simple package designed to simplify the writing of multiplayer",
     "displayName": "Unity Basic Multiplayer",
-    "unity": "2020.3.46"
+    "unity": "2020.3"
 }
