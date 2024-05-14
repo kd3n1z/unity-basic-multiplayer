@@ -295,7 +295,8 @@ namespace UBM {
         private void Authenticate(uint clientId, ClientInstance clientInstance) {
             Logger.Log("Client " + clientId + " authenticated successfully");
             clientInstance.Authenticated = true;
-            SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.AuthStatus, new[] { MultiplayerConstants.AuthStatusSuccess }));
+            SendCommandToClient(clientId,
+                new MultiplayerCommand(MultiplayerConstants.AuthStatus, new[] { MultiplayerConstants.AuthStatusSuccess, clientId.ToString() }));
             OnClientAuthenticated(clientId);
         }
 
