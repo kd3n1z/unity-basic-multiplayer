@@ -252,7 +252,7 @@ namespace UBM {
                                         }
                                     }
                                     catch (Exception e) {
-                                        string message = "Command handler threw " + e;
+                                        string message = "Command handler threw " + e + " (command was `" + command + "`)";
 
                                         if (ignoreMessageHandlerExceptions) {
                                             Logger.LogWarning(message);
