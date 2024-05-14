@@ -9,12 +9,12 @@ using UnityEngine;
 
 namespace UBM {
     public abstract class Server : MonoBehaviour {
-        private static readonly Encoding ServerEncoding = Encoding.ASCII;
-
         private static Server _instance;
 
         [Header("General")]
         [SerializeField] private float heartbeatInterval = 5;
+
+        [Header("Security")]
         [SerializeField] private bool ignoreMessageHandlerExceptions;
         [SerializeField] private bool kickAfterWrongPassword;
 
@@ -184,7 +184,7 @@ namespace UBM {
                 else {
                     Logger.Log("Waiting for " + clientId + " to authenticate...");
                     SendCommandToClient(clientId,
-                        new MultiplayerCommand(MultiplayerCommand.Constants.AuthStatus, new[] { MultiplayerCommand.Constants.AuthStatusRequired }));
+                        new MultiplayerCommand(MultiplayerConstants.AuthStatus, new[] { MultiplayerConstants.AuthStatusRequired }));
                 }
 
                 float timeUntilHeartbeat = heartbeatInterval;
@@ -205,12 +205,12 @@ namespace UBM {
 
                             timeUntilHeartbeat = heartbeatInterval;
 
-                            SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerCommand.Constants.Heartbeat));
+                            SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.Heartbeat));
                         }
 
                         if (stream.DataAvailable) {
                             int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                            string messageChunk = ServerEncoding.GetString(buffer, 0, bytesRead);
+                            string messageChunk = MultiplayerConstants.TcpEncoding.GetString(buffer, 0, bytesRead);
                             messageBuilder.Append(messageChunk);
 
                             if (messageChunk.EndsWith("\n")) {
@@ -223,17 +223,17 @@ namespace UBM {
 
                                         if (clientInstance.Authenticated) {
                                             switch (multiplayerCommand.Command) {
-                                                case MultiplayerCommand.Constants.Ping:
-                                                    SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerCommand.Constants.PingResponse));
+                                                case MultiplayerConstants.Ping:
+                                                    SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.PingResponse));
                                                     break;
-                                                case MultiplayerCommand.Constants.Message:
+                                                case MultiplayerConstants.Message:
                                                     OnMessageReceived(clientId, multiplayerCommand.Args[0]);
                                                     break;
                                                 default:
                                                     throw new InvalidCommandException();
                                             }
                                         }
-                                        else if (multiplayerCommand.Command != MultiplayerCommand.Constants.Auth) {
+                                        else if (multiplayerCommand.Command != MultiplayerConstants.Auth) {
                                             throw new ClientNotAuthenticatedException();
                                         }
                                         else {
@@ -242,8 +242,8 @@ namespace UBM {
                                             }
                                             else {
                                                 Logger.Log("Client " + clientId + " entered wrong password");
-                                                SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerCommand.Constants.AuthStatus,
-                                                    new[] { MultiplayerCommand.Constants.AuthStatusError }));
+                                                SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.AuthStatus,
+                                                    new[] { MultiplayerConstants.AuthStatusError }));
                                                 if (kickAfterWrongPassword) {
                                                     Kick(clientId);
                                                 }
@@ -294,8 +294,7 @@ namespace UBM {
         private void Authenticate(uint clientId, ClientInstance clientInstance) {
             Logger.Log("Client " + clientId + " authenticated successfully");
             clientInstance.Authenticated = true;
-            SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerCommand.Constants.AuthStatus,
-                new[] { MultiplayerCommand.Constants.AuthStatusSuccess }));
+            SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.AuthStatus, new[] { MultiplayerConstants.AuthStatusSuccess }));
             OnClientAuthenticated(clientId);
         }
 
@@ -304,14 +303,14 @@ namespace UBM {
         }
 
         private void SendCommandToClient(uint clientId, MultiplayerCommand command) {
-            byte[] data = ServerEncoding.GetBytes(command + "\n");
+            byte[] data = MultiplayerConstants.TcpEncoding.GetBytes(command + "\n");
             _clients[clientId].Stream.Write(data, 0, data.Length);
         }
 
         protected void SendMessageToClient(uint clientId, string message) {
             // catch data send exceptions
             try {
-                SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerCommand.Constants.Message, new[] { message }));
+                SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.Message, new[] { message }));
             }
             catch (Exception e) {
                 Logger.LogWarning("Error sending message to " + clientId + ": " + e);
