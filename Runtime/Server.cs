@@ -242,8 +242,9 @@ namespace UBM {
                                             }
                                             else {
                                                 Logger.Log("Client " + clientId + " entered wrong password");
-                                                SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.AuthStatus,
-                                                    new[] { MultiplayerConstants.AuthStatusError }));
+                                                SendCommandToClient(clientId,
+                                                    new MultiplayerCommand(MultiplayerConstants.AuthStatus,
+                                                        new[] { MultiplayerConstants.AuthStatusError, "wrong password" }));
                                                 if (kickAfterWrongPassword) {
                                                     Kick(clientId);
                                                 }
