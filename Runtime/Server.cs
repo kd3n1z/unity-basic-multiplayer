@@ -312,6 +312,10 @@ namespace UBM {
         protected void SendMessageToClient(uint clientId, string message) {
             // catch data send exceptions
             try {
+                if (!_clients[clientId].Authenticated) {
+                    throw new ClientNotAuthenticatedException();
+                }
+                
                 SendCommandToClient(clientId, new MultiplayerCommand(MultiplayerConstants.Message, new[] { message }));
             }
             catch (Exception e) {
