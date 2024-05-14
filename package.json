@@ -1,6 +1,6 @@
 {
     "name": "com.kd3n1z.ubm",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Simple package designed to simplify the writing of multiplayer",
     "displayName": "Unity Basic Multiplayer",
     "unity": "2020.3"
