@@ -287,8 +287,8 @@ namespace UBM {
                     Logger.LogWarning("Error closing client " + clientId + ": " + e);
                 }
 
-                OnClientClosed(clientId);
                 _clients.Remove(clientId);
+                OnClientClosed(clientId);
             }
         }
 
