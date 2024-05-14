@@ -15,8 +15,8 @@ namespace UBM {
         [SerializeField] private float heartbeatInterval = 5;
 
         [Header("Security")]
-        [SerializeField] private bool ignoreMessageHandlerExceptions;
-        [SerializeField] private bool kickAfterWrongPassword;
+        [SerializeField] private bool ignoreMessageHandlerExceptions = true;
+        [SerializeField] private bool kickAfterWrongPassword = true;
 
         [Header("Performance")]
         [Tooltip("Set to -1 to disable")]
