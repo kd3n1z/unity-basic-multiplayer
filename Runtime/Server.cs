@@ -12,7 +12,7 @@ namespace UBM {
         private static Server _instance;
 
         [Header("General")]
-        [SerializeField] private float heartbeatInterval = 5;
+        [SerializeField] private float heartbeatInterval = 1;
 
         [Header("Security")]
         [SerializeField] private bool ignoreMessageHandlerExceptions = true;
